@@ -25,7 +25,7 @@ const argv = yargs(hideBin(process.argv))
   .option('i', {
     alias: 'index',
     demandOption: false,
-    describe: 'Prefix each line with index. Useful in particular with count > 1',
+    describe: 'Prefix each line with index, for use with larger values of count.',
     type: 'boolean'
   })
   .strict()
