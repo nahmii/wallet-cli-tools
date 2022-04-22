@@ -7,6 +7,7 @@ const {hideBin} = require('yargs/helpers');
 const Wallet = require('ethereumjs-wallet').default;
 const fs = require('fs/promises');
 const path = require('path');
+const readline = require('readline');
 
 const parseArgs = (isTTY) => {
   const usage = `$0 ${isTTY ? '<private-key>' : ''} [options]`;
@@ -74,11 +75,13 @@ const createKeystoreFile = async ({privateKey, password, fileOutput, outputDir})
     const argv = parseArgs(true);
     await createKeystoreFile(argv);
   } else {
-    process.stdin.resume();
-    process.stdin.setEncoding('utf8');
+    const argv = parseArgs(false);
 
-    process.stdin.on('data', async (privateKey) => {
-      const argv = parseArgs(false);
+    const rl = readline.createInterface({
+      input: process.stdin
+    });
+
+    rl.on('line', async (privateKey) => {
       await createKeystoreFile({
         ...argv,
         privateKey
