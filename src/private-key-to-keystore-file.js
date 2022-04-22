@@ -8,14 +8,25 @@ const Wallet = require('ethereumjs-wallet').default;
 const fs = require('fs/promises');
 const path = require('path');
 
-(async () => {
-  const argv = yargs(hideBin(process.argv))
-    .usage('$0 [options] <private-key>', 'Generate keystore file from private key and password', (yargs) => {
+const parseArgs = (isTTY) => {
+  const usage = `$0 ${isTTY ? '<private-key>' : ''} [options]`;
+
+  return yargs(hideBin(process.argv))
+    .usage(usage, 'Generate keystore file from private key and password', (yargs) => {
+
+      if (isTTY) {
+        yargs
+          .positional('private-key', {
+            describe: 'The private key.',
+            type: 'string'
+          })
+          .parserConfiguration({
+            'parse-positional-numbers': false
+          })
+        ;
+      }
+
       yargs
-        .positional('private-key', {
-          describe: 'Private key',
-          type: 'string'
-        })
         .option('password', {
           alias: 'p',
           demandOption: true,
@@ -37,24 +48,41 @@ const path = require('path');
           type: 'string'
         });
     })
-    .parserConfiguration({
-      'parse-positional-numbers': false
-    })
     .strict()
     .help('h')
     .alias('h', 'help')
     .argv;
+};
 
-  const key = Buffer.from(argv.privateKey.replace(/^0x/, ''), 'hex');
+const createKeystoreFile = async ({privateKey, password, fileOutput, outputDir}) => {
+  const key = Buffer.from(privateKey.replace(/^0x/, ''), 'hex');
   const wallet = Wallet.fromPrivateKey(key);
 
-  const keystore = await wallet.toV3String(argv.password);
-  if (argv.fileOutput) {
-    const filePath = path.join(argv.outputDir, wallet.getV3Filename());
-    await fs.mkdir(argv.outputDir, {recursive: true});
+  const keystore = await wallet.toV3String(password);
+  if (fileOutput) {
+    const filePath = path.join(outputDir, wallet.getV3Filename());
+    await fs.mkdir(outputDir, {recursive: true});
     await fs.writeFile(filePath, keystore);
     console.log(`Keystore output to '${filePath}'`);
   } else {
     console.log(keystore);
+  }
+};
+
+(async () => {
+  if (process.stdin.isTTY) {
+    const argv = parseArgs(true);
+    await createKeystoreFile(argv);
+  } else {
+    process.stdin.resume();
+    process.stdin.setEncoding('utf8');
+
+    process.stdin.on('data', async (privateKey) => {
+      const argv = parseArgs(false);
+      await createKeystoreFile({
+        ...argv,
+        privateKey
+      });
+    });
   }
 })();

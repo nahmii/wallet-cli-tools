@@ -5,6 +5,7 @@
 const yargs = require('yargs/yargs');
 const {hideBin} = require('yargs/helpers');
 const wallet = require('ethereumjs-wallet').default;
+const os = require('os');
 
 const argv = yargs(hideBin(process.argv))
   .usage('$0 [options]', 'Generate private key(s)')
@@ -45,5 +46,5 @@ for (let index = 0; index < argv.count; index++) {
   if (argv.address)
     line += ` ${addressData.getAddressString()}`;
 
-  console.log(line);
+  process.stdout.write(line + os.EOL);
 }
