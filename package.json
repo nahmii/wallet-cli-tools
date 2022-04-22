@@ -28,7 +28,7 @@
     "prettier": "^2.6.2"
   },
   "bin": {
-    "generate-private-key": "src/generate-private-key.js",
-    "private-key-to-keystore-file": "src/private-key-to-keystore-file.js"
+    "generate-private-key": "src/generate-private-key/index.js",
+    "private-key-to-keystore-file": "src/private-key-to-keystore-file/index.js"
   }
 }

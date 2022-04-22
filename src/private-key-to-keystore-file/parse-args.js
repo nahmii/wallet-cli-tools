@@ -4,12 +4,8 @@
 
 const yargs = require('yargs/yargs');
 const {hideBin} = require('yargs/helpers');
-const Wallet = require('ethereumjs-wallet').default;
-const fs = require('fs/promises');
-const path = require('path');
-const readline = require('readline');
 
-const parseArgs = (isTTY) => {
+module.exports = (isTTY) => {
   const usage = `$0 ${isTTY ? '<private-key>' : ''} [options]`;
 
   return yargs(hideBin(process.argv))
@@ -54,38 +50,3 @@ const parseArgs = (isTTY) => {
     .alias('h', 'help')
     .argv;
 };
-
-const createKeystoreFile = async ({privateKey, password, fileOutput, outputDir}) => {
-  const key = Buffer.from(privateKey.replace(/^0x/, ''), 'hex');
-  const wallet = Wallet.fromPrivateKey(key);
-
-  const keystore = await wallet.toV3String(password);
-  if (fileOutput) {
-    const filePath = path.join(outputDir, wallet.getV3Filename());
-    await fs.mkdir(outputDir, {recursive: true});
-    await fs.writeFile(filePath, keystore);
-    console.log(`Keystore output to '${filePath}'`);
-  } else {
-    console.log(keystore);
-  }
-};
-
-(async () => {
-  if (process.stdin.isTTY) {
-    const argv = parseArgs(true);
-    await createKeystoreFile(argv);
-  } else {
-    const argv = parseArgs(false);
-
-    const rl = readline.createInterface({
-      input: process.stdin
-    });
-
-    rl.on('line', async (privateKey) => {
-      await createKeystoreFile({
-        ...argv,
-        privateKey
-      });
-    });
-  }
-})();
