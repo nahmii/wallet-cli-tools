@@ -1,7 +1,7 @@
 {
-  "name": "wallet-tools",
+  "name": "wallet-cli-tools",
   "version": "1.0.0",
-  "description": "",
+  "description": "CLI tools for working with Ethereum wallets (EOAs)",
   "main": "index.js",
   "scripts": {
     "lint": "eslint . --ext .js",
@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "ethereumjs-wallet": "^1.0.2",
     "yargs": "^17.4.1"
