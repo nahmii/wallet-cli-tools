@@ -31,17 +31,31 @@ module.exports = (isTTY) => {
           type: 'string'
         })
         .option('file-output', {
-          alias: 'f',
+          alias: 'F',
           default: false,
           demandOption: false,
-          describe: 'The output file directory. If not provided the keystore is sent to std out.',
-          type: 'boolean'
+          describe: 'Output to file. If not provided the keystore is sent to std out.',
+          TYPE: 'BOOLEAN'
         })
-        .option('output-dir', {
-          alias: 'o',
+        .option('output-directory', {
+          alias: 'd',
           default: 'keystore',
           demandOption: false,
           describe: 'The directory for file output.',
+          type: 'string'
+        })
+        .option('output-file', {
+          alias: 'f',
+          demandOption: false,
+          describe: 'The directory for file output. If not provided the name will be generated according to a template of \'UTC--<timestamp>--<address>\'.',
+          type: 'string'
+        })
+        .option('key-derivation-function', {
+          alias: 'k',
+          demandOption: false,
+          default: 'pbkdf2',
+          choices: ['pbkdf2', 'scrypt'],
+          describe: 'The key derivation function.',
           type: 'string'
         });
     })

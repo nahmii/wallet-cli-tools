@@ -45,12 +45,12 @@ Options:
 With private key at hand it is sometimes useful to generate a keystore from it. The executable `private-key-to-keystore-file` is the tool to use for this purpose:
 ```shell
 $ private-key-to-keystore-file 0x1d565082dac27cc7a6cdb3edea39133823cb007f0610c14a430b2e4ebd278cc2 -p InToddWeTrust
-{"version":3,"id":"fd209e3e-a625-4756-9823-66c14f69314f","address":"c247fea5d7db3121cd4e35952a27b695591c1ccd","crypto":{"ciphertext":"2044653c2c2f9ba6e41f6c0001627951738180c0e8fb8a50fc55b24190390b24","cipherparams":{"iv":"494bbf50670aaf41e0b76bb124cae477"},"cipher":"aes-128-ctr","kdf":"scrypt","kdfparams":{"dklen":32,"salt":"55b357e48382dc5ceec45dcbcae102cc6a628a65c5c98356b141c5fb15055b11","n":262144,"r":8,"p":1},"mac":"1e0cadc1436b092c6a33282e9b5e49984ce1f40460e90b2b34bdcc7d0234cd1b"}}
+{"version":3,"id":"514ac583-4eef-4c6d-a438-5191887bdf1d","address":"c247fea5d7db3121cd4e35952a27b695591c1ccd","crypto":{"ciphertext":"a71ce00461163d21a4abd41a439d2d3727e0fa5610d9a054f258a038f1478f02","cipherparams":{"iv":"a0a2449b9fa463619a77455d4b33c897"},"cipher":"aes-128-ctr","kdf":"pbkdf2","kdfparams":{"dklen":32,"salt":"109a51f5f4dae997a33c9d371f906b2779b83d33967e14756a316f7a0c8f11e4","c":262144,"prf":"hmac-sha256"},"mac":"0f44f92736368f6d5c7c5341652803797655258c111dca1945ddd084c8f811a2"}}
 ```
 
 Add option `-f` and a file output will be generated instead of output of keystore to standard out:
 ```shell
-$ private-key-to-keystore-file 0x1d565082dac27cc7a6cdb3edea39133823cb007f0610c14a430b2e4ebd278cc2 -p InToddWeTrust -f
+$ private-key-to-keystore-file 0x1d565082dac27cc7a6cdb3edea39133823cb007f0610c14a430b2e4ebd278cc2 -p InToddWeTrust -F
 Keystore output to 'keystore/UTC--2022-04-22T17-57-43.052Z--c247fea5d7db3121cd4e35952a27b695591c1ccd'
 ```
 
@@ -65,14 +65,20 @@ Positionals:
   private-key  The private key.                                         [string]
 
 Options:
-      --version      Show version number                               [boolean]
-  -h, --help         Show help                                         [boolean]
-  -p, --password     The password for encrypting the keystore.
+      --version                  Show version number                   [boolean]
+  -h, --help                     Show help                             [boolean]
+  -p, --password                 The password for encrypting the keystore.
                                                              [string] [required]
-  -f, --file-output  The output file directory. If not provided the keystore is
-                     sent to std out.                 [boolean] [default: false]
-  -o, --output-dir   The directory for file output.
+  -F, --file-output              Output to file. If not provided the keystore is
+                                 sent to std out.               [default: false]
+  -d, --output-directory         The directory for file output.
                                                   [string] [default: "keystore"]
+  -f, --output-file              The directory for file output. If not provided
+                                 the name will be generated according to a
+                                 template of 'UTC--<timestamp>--<address>'.
+                                                                        [string]
+  -k, --key-derivation-function  The key derivation function.
+                      [string] [choices: "pbkdf2", "scrypt"] [default: "pbkdf2"]
 ```
 
 Finally, `private-key-to-keystore-file` may also be called in a piped mode to receive input e.g. from `generate-private-key`. This allows the generation of multiple keystore files from randomly generated private keys:
