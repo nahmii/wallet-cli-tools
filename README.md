@@ -42,6 +42,7 @@ Options:
 ```
 
 ### private-key-to-keystore-file
+
 With private key at hand it is sometimes useful to generate a keystore from it. The executable `private-key-to-keystore-file` is the tool to use for this purpose:
 ```shell
 $ private-key-to-keystore-file 0x1d565082dac27cc7a6cdb3edea39133823cb007f0610c14a430b2e4ebd278cc2 -p InToddWeTrust
@@ -67,24 +68,35 @@ Positionals:
 Options:
       --version                  Show version number                   [boolean]
   -h, --help                     Show help                             [boolean]
-  -p, --password                 The password for encrypting the keystore.
-                                                             [string] [required]
+  -p, --password                 Password for encrypting the keystore.  [string]
+  -P, --password-generator       Password generator executable.         [string]
   -F, --file-output              Output to file. If not provided the keystore is
-                                 sent to std out.               [default: false]
-  -d, --output-directory         The directory for file output.
+                                 sent to std out.     [boolean] [default: false]
+  -d, --output-directory         Directory for file output.
                                                   [string] [default: "keystore"]
-  -f, --output-file              The directory for file output. If not provided
-                                 the name will be generated according to a
-                                 template of 'UTC--<timestamp>--<address>'.
-                                                                        [string]
-  -k, --key-derivation-function  The key derivation function.
+  -f, --output-file              Directory for file output. If not provided the
+                                 name will be generated according to a template
+                                 of 'UTC--<timestamp>--<address>'.      [string]
+  -k, --key-derivation-function  Key derivation function.
                       [string] [choices: "pbkdf2", "scrypt"] [default: "pbkdf2"]
 ```
 
-Finally, `private-key-to-keystore-file` may also be called in a piped mode to receive input e.g. from `generate-private-key`. This allows the generation of multiple keystore files from randomly generated private keys:
+#### Piped mode
+`private-key-to-keystore-file` may also be called in a piped mode to receive input e.g. from `generate-private-key`. This allows the generation of multiple keystore files from randomly generated private keys:
 ```shell
-$ generate-private-key -c 3 | private-key-to-keystore-file -p InToddWeTrust -f
+$ generate-private-key -c 3 | private-key-to-keystore-file -F -p InToddWeTrust
 Keystore output to 'keystore/UTC--2022-04-22T18-03-19.381Z--d094ea92c10c210f08dc461b7a4acbf5b89ac1bc'
 Keystore output to 'keystore/UTC--2022-04-22T18-03-19.382Z--bf7c246239170eedd2080372e6bf452e4298a886'
 Keystore output to 'keystore/UTC--2022-04-22T18-03-19.383Z--d71cc773ea0e412689718b695af05ef42c665f66'
+```
+
+The command line above creates multiple keystore files with the same password for each file. In most cases, however, it is fair to assume that a separate password should be used for each keystore file.
+
+`private-key-to-keystore-file` supports the provision of an executable to generate password, one for each keystore. One example of a password generator is [password-generator](https://www.npmjs.com/package/password-generator). With this executable installed the command line above may be modified to generate one password on the fly for each keystore.
+
+```shell
+$ generate-private-key -c 3 | private-key-to-keystore-file -F -P "password-generator -c"
+Keystore output to 'keystore/UTC--2022-04-25T14-10-11.882Z--478c64eff0a9ed498ca1a57765c04ff3e69e5890' - Password: ynF9P3Wc9_
+Keystore output to 'keystore/UTC--2022-04-25T14-10-11.992Z--03f94853f705e5ce9bf209c35dd5492e4b20bc8c' - Password: y8CPUvuXy3
+Keystore output to 'keystore/UTC--2022-04-25T14-10-12.112Z--b942e3a9413b0367c5dbc92a9ec5addc19438d90' - Password: xKDkTUj2wt
 ```

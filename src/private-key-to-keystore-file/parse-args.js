@@ -2,13 +2,15 @@
 
 'use strict';
 
-const yargs = require('yargs/yargs');
+const yargs = require('yargs');
 const {hideBin} = require('yargs/helpers');
+const os = require('os');
+const config = require('./config');
 
 module.exports = (isTTY) => {
   const usage = `$0 ${isTTY ? '<private-key>' : ''} [options]`;
 
-  return yargs(hideBin(process.argv))
+  const argv = yargs(hideBin(process.argv))
     .usage(usage, 'Generate keystore file from private key and password', (yargs) => {
 
       if (isTTY) {
@@ -26,8 +28,14 @@ module.exports = (isTTY) => {
       yargs
         .option('password', {
           alias: 'p',
-          demandOption: true,
-          describe: 'The password for encrypting the keystore.',
+          demandOption: false,
+          describe: 'Password for encrypting the keystore.',
+          type: 'string'
+        })
+        .option('password-generator', {
+          alias: 'P',
+          demandOption: false,
+          describe: 'Password generator executable.',
           type: 'string'
         })
         .option('file-output', {
@@ -35,19 +43,19 @@ module.exports = (isTTY) => {
           default: false,
           demandOption: false,
           describe: 'Output to file. If not provided the keystore is sent to std out.',
-          TYPE: 'BOOLEAN'
+          type: 'boolean'
         })
         .option('output-directory', {
           alias: 'd',
           default: 'keystore',
           demandOption: false,
-          describe: 'The directory for file output.',
+          describe: 'Directory for file output.',
           type: 'string'
         })
         .option('output-file', {
           alias: 'f',
           demandOption: false,
-          describe: 'The directory for file output. If not provided the name will be generated according to a template of \'UTC--<timestamp>--<address>\'.',
+          describe: 'Directory for file output. If not provided the name will be generated according to a template of \'UTC--<timestamp>--<address>\'.',
           type: 'string'
         })
         .option('key-derivation-function', {
@@ -55,12 +63,20 @@ module.exports = (isTTY) => {
           demandOption: false,
           default: 'pbkdf2',
           choices: ['pbkdf2', 'scrypt'],
-          describe: 'The key derivation function.',
+          describe: 'Key derivation function.',
           type: 'string'
         });
     })
+    .conflicts('p', 'P')
     .strict()
     .help('h')
     .alias('h', 'help')
     .argv;
+
+  if (!argv.password && !argv.passwordGenerator) {
+    yargs.showHelp(s => process.stderr.write(s + os.EOL + os.EOL + 'The command line must include either p or P' + os.EOL));
+    process.exit(config.exit.passwordAndPasswordGeneratorNeeded);
+  }
+
+  return argv;
 };
