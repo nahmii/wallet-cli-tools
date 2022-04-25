@@ -100,3 +100,12 @@ Keystore output to 'keystore/UTC--2022-04-25T14-10-11.882Z--478c64eff0a9ed498ca1
 Keystore output to 'keystore/UTC--2022-04-25T14-10-11.992Z--03f94853f705e5ce9bf209c35dd5492e4b20bc8c' - Password: y8CPUvuXy3
 Keystore output to 'keystore/UTC--2022-04-25T14-10-12.112Z--b942e3a9413b0367c5dbc92a9ec5addc19438d90' - Password: xKDkTUj2wt
 ```
+
+As an alternative to executable password generator a text file (with extension _.txt_) may be used. If more passwords are needed than are contained in the provided text file the logics cycle through the password file as many times as required. The sample password file contains two passwords only.
+
+```shell
+generate-private-key -c 3 | private-key-to-keystore-file -F -P src/private-key-to-keystore-file/passwords/sample.txt
+Keystore output to 'keystore/UTC--2022-04-26T07-14-55.732Z--0469c6cdd420379619d9a80c4fd3ceea712c135e' - Password: pw1
+Keystore output to 'keystore/UTC--2022-04-26T07-14-55.734Z--c5b0bec47879380dcf17de35b790b0091cf29c8d' - Password: pw2
+Keystore output to 'keystore/UTC--2022-04-26T07-14-55.734Z--7ec5328acc3e25c6ab6589a08dfd19fd0891a556' - Password: pw1
+```

@@ -5,7 +5,7 @@
 const readline = require('readline');
 const parseArgs = require('./parse-args');
 const createKeystoreFile = require('./create-keystore-file');
-const generatePassword = require('./generate-password');
+const passwordGeneratorFactory = require('./password-generator-factory');
 
 (async () => {
   if (process.stdin.isTTY) {
@@ -14,7 +14,9 @@ const generatePassword = require('./generate-password');
     let outputPassword = false;
 
     if (!argv.password && argv.passwordGenerator) {
-      argv.password = await generatePassword(argv.passwordGenerator);
+      const passwordGenerator = passwordGeneratorFactory.create(argv.passwordGenerator);
+      argv.password = await passwordGenerator.generate();
+
       outputPassword = true;
     }
 
@@ -30,11 +32,18 @@ const generatePassword = require('./generate-password');
       input: process.stdin
     });
 
+    let passwordGenerator;
+
+    if (!argv.password && argv.passwordGenerator) {
+      passwordGenerator = passwordGeneratorFactory.create(argv.passwordGenerator);
+    }
+
     rl.on('line', async (privateKey) => {
       let outputPassword = false;
 
-      if (!argv.password && argv.passwordGenerator) {
-        argv.password = await generatePassword(argv.passwordGenerator);
+      if (passwordGenerator) {
+        argv.password = await passwordGenerator.generate();
+
         outputPassword = true;
       }
 

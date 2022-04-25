@@ -35,7 +35,7 @@ module.exports = (isTTY) => {
         .option('password-generator', {
           alias: 'P',
           demandOption: false,
-          describe: 'Password generator executable.',
+          describe: 'Password generator executable or text file with one password per line.',
           type: 'string'
         })
         .option('file-output', {

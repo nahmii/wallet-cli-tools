@@ -3,7 +3,8 @@
 module.exports = {
   exit: {
     passwordAndPasswordGeneratorNeeded: 1,
-    passwordGeneratorStdErr: 2,
-    passwordGeneratorError: 3
+    passwordGeneratorFromExecutableStdErr: 2,
+    passwordGeneratorFromExecutableError: 3,
+    passwordGeneratorFactoryCreateError: 4
   }
 };
