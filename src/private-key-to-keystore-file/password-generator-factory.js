@@ -6,7 +6,7 @@ const config = require('./config');
 
 const exec = util.promisify(require('child_process').exec);
 
-function* createIndexIterator () {
+function* createIndexIterator() {
   let index = 0;
   while (true) {
     yield index++;
@@ -54,10 +54,40 @@ class GeneratorFromExecutable {
   }
 }
 
+const isFile = (file) => {
+  let isFile;
+
+  try {
+    const stat = fs.statSync(file);
+    isFile = stat.isFile();
+  } catch (err) {
+    isFile = false;
+  }
+
+  return isFile;
+};
+
+const isExecutableFile = (file) => {
+  if (!isFile(file)) {
+    return false;
+  }
+
+  let isExecutable;
+
+  try {
+    fs.accessSync(file, fs.constants.X_OK);
+    isExecutable = true;
+  } catch (err) {
+    isExecutable = false;
+  }
+
+  return isExecutable;
+};
+
 module.exports = {
   create: (generatorSpec) => {
     try {
-      if (generatorSpec.endsWith('.txt')) {
+      if (isFile(generatorSpec) && !isExecutableFile(generatorSpec)) {
         return new GeneratorFromTextFile(generatorSpec);
       } else {
         return new GeneratorFromExecutable(generatorSpec);
