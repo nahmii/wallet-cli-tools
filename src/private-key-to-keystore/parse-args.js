@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 'use strict';
 
 const yargs = require('yargs');
@@ -8,7 +6,7 @@ const os = require('os');
 const config = require('./config');
 
 module.exports = (isTTY) => {
-  const usage = `$0 ${isTTY ? '<private-key>' : ''} [options]`;
+  const usage = `$0 ${isTTY ? '<private-key>' : '[private-key]'}`;
 
   const argv = yargs(hideBin(process.argv))
     .usage(usage, 'Generate keystore file from private key and password', (yargs) => {
@@ -16,56 +14,49 @@ module.exports = (isTTY) => {
       if (isTTY) {
         yargs
           .positional('private-key', {
-            describe: 'The private key.',
+            describe: 'Private key',
             type: 'string'
-          })
-          .parserConfiguration({
-            'parse-positional-numbers': false
-          })
-        ;
+          });
       }
 
       yargs
         .option('password', {
           alias: 'p',
-          demandOption: false,
-          describe: 'Password for encrypting the keystore.',
+          describe: 'Password for encrypting the keystore',
           type: 'string'
         })
         .option('password-generator', {
           alias: 'P',
-          demandOption: false,
-          describe: 'Password generator executable or text file with one password per line.',
+          describe: 'Password generator executable or text file with one password per line',
           type: 'string'
         })
         .option('file-output', {
           alias: 'F',
-          default: false,
-          demandOption: false,
-          describe: 'Output to file. If not provided the keystore is sent to std out.',
-          type: 'boolean'
+          describe: 'Output to file if true, else output to std out',
+          type: 'boolean',
+          default: false
         })
         .option('output-directory', {
           alias: 'd',
+          describe: 'Directory for file output',
           default: 'keystore',
-          demandOption: false,
-          describe: 'Directory for file output.',
           type: 'string'
         })
         .option('output-file', {
           alias: 'f',
-          demandOption: false,
-          describe: 'Directory for file output. If not provided the name will be generated according to a template of \'UTC--<timestamp>--<address>\'.',
+          describe: 'Directory for file output. If not provided the name will be generated according to a template of \'UTC--<timestamp>--<address>\'',
           type: 'string'
         })
         .option('key-derivation-function', {
           alias: 'k',
-          demandOption: false,
+          describe: 'Key derivation function',
+          type: 'string',
           default: 'pbkdf2',
-          choices: ['pbkdf2', 'scrypt'],
-          describe: 'Key derivation function.',
-          type: 'string'
+          choices: ['pbkdf2', 'scrypt']
         });
+    })
+    .parserConfiguration({
+      'parse-positional-numbers': false
     })
     .conflicts('p', 'P')
     .strict()

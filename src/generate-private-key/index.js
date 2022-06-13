@@ -8,24 +8,21 @@ const wallet = require('ethereumjs-wallet').default;
 const os = require('os');
 
 const argv = yargs(hideBin(process.argv))
-  .usage('$0 [options]', 'Generate private key(s)')
-  .option('c', {
-    alias: 'count',
-    demandOption: false,
-    describe: 'The number of private keys.',
+  .usage('$0', 'Generate private key(s)')
+  .option('count', {
+    alias: 'c',
+    describe: 'Number of private keys',
     type: 'number',
     default: 1
   })
-  .option('a', {
-    alias: 'address',
-    demandOption: false,
-    describe: 'Output address alongside the private key.',
+  .option('address', {
+    alias: 'a',
+    describe: 'Output address alongside the private key',
     type: 'boolean'
   })
-  .option('i', {
-    alias: 'index',
-    demandOption: false,
-    describe: 'Prefix each line with index, for use with larger values of count.',
+  .option('index', {
+    alias: 'i',
+    describe: 'Prefix each line with index, for use with larger values of count',
     type: 'boolean'
   })
   .strict()
