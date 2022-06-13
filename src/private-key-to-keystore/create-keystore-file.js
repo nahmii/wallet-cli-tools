@@ -1,12 +1,19 @@
-#!/usr/bin/env node
-
 'use strict';
 
 const Wallet = require('ethereumjs-wallet').default;
 const fs = require('fs/promises');
 const path = require('path');
+const os = require('os');
 
-module.exports = async ({privateKey, password, outputPassword, fileOutput, outputDirectory, outputFile, keyDerivationFunction}) => {
+module.exports = async ({
+  privateKey,
+  password,
+  outputPassword,
+  fileOutput,
+  outputDirectory,
+  outputFile,
+  keyDerivationFunction
+}) => {
   const key = Buffer.from(privateKey.replace(/^0x/, ''), 'hex');
   const wallet = Wallet.fromPrivateKey(key);
 
@@ -23,12 +30,12 @@ module.exports = async ({privateKey, password, outputPassword, fileOutput, outpu
       line += ` - Password: ${password}`;
     }
 
-    console.log(line);
+    process.stdout.write(line + os.EOL);
   } else {
-    console.log(`Keystore: ${keystore}`);
+    process.stdout.write(`${keystore}` + os.EOL);
 
     if (outputPassword) {
-      console.log(`Password: ${password}`);
+      process.stdout.write(`password: ${password}` + os.EOL);
     }
   }
 };

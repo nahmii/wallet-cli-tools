@@ -29,6 +29,8 @@
   },
   "bin": {
     "generate-private-key": "src/generate-private-key/index.js",
-    "private-key-to-keystore-file": "src/private-key-to-keystore-file/index.js"
+    "private-key-to-keystore": "src/private-key-to-keystore/index.js",
+    "keystore-to-private-key": "src/keystore-to-private-key/index.js",
+    "read-pipe": "src/read-pipe/index.js"
   }
 }
