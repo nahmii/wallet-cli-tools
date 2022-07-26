@@ -4,7 +4,7 @@
 
 const readline = require('readline');
 const readPrivateKey = require('./read-private-key');
-const parseArgs = require('.//parse-args');
+const parseArgs = require('./parse-args');
 const os = require('os');
 const config = require('./config');
 

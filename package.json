@@ -2,7 +2,9 @@
   "name": "wallet-cli-tools",
   "version": "1.0.0",
   "description": "CLI tools for working with Ethereum wallets (EOAs)",
-  "main": "index.js",
+  "engines": {
+    "node": "^16"
+  },
   "scripts": {
     "lint": "eslint . --ext .js",
     "lint:fix": "npm run lint -- --fix",
@@ -12,7 +14,10 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "ethereum-block-by-date": "^1.4.5",
     "ethereumjs-wallet": "^1.0.2",
+    "ethers": "^5.6.9",
+    "js-yaml": "^4.1.0",
     "yargs": "^17.4.1"
   },
   "devDependencies": {
@@ -28,8 +33,9 @@
     "prettier": "^2.6.2"
   },
   "bin": {
+    "date-to-block": "src/date-to-block/index.js",
     "generate-private-key": "src/generate-private-key/index.js",
-    "private-key-to-keystore": "src/private-key-to-keystore/index.js",
-    "keystore-to-private-key": "src/keystore-to-private-key/index.js"
+    "keystore-to-private-key": "src/keystore-to-private-key/index.js",
+    "private-key-to-keystore": "src/private-key-to-keystore/index.js"
   }
 }

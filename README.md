@@ -1,6 +1,6 @@
 # Wallet CLI Tools
 
-This repository contains some CLIs that are useful working with Ethereum wallets (EOAs).
+This repository contains some CLIs that are useful working with Ethereum wallets (more speficially externally owned accounts or EOAs) and EVM compatible blockchains.
 
 ## Node.js
 The CLIs have been successfully tested with the Node.js 16 ("Gallium") LTS release.
@@ -163,4 +163,79 @@ Ultimately `keystore-to-private-key` could, primarily for testing purposes, be c
 ```shell
 $ generate-private-key | private-key-to-keystore -p my-password | keystore-to-private-key -p my-password
 0x0cd7b571730dd8096e8978b4937023f52cdfaf9c1a273ba7ba0f04375d03b3f6
+```
+
+### date-to-block
+
+Executable `date-to-block` is able to extract temporal block info based on datetime(s) provided in the [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
+
+Extracting info of the first block after `2022-05-01T00:00:00Z` may be done by invoking
+```shell
+$ date-to-block 2022-05-01T00:00:00Z
+{"date":"2022-05-01T00:00:05.000Z","block":14688630,"timestamp":1651363205}
+```
+
+A start and end datetime may be provided in pair.
+```shell
+$ date-to-block 2022-05-01T00:00:00Z 2022-06-01T00:00:00Z | jq
+[
+  {
+    "date": "2022-05-01T00:00:05.000Z",
+    "block": 14688630,
+    "timestamp": 1651363205
+  },
+  {
+    "date": "2022-06-01T00:00:01.000Z",
+    "block": 14881677,
+    "timestamp": 1654041601
+  }
+]
+```
+Above the JSON output is prettified using [jq](https://stedolan.github.io/jq/) (which also exists as [node-jq](https://www.npmjs.com/package/node-jq) as package for Node.js).
+
+Possibly more useful is to output the range of blocks in the span from start to end datetimes. Below are the first blocks of every week over an entire month, with YAML output as a variation.
+```shell
+$ date-to-block 2022-05-01T00:00:00Z 2022-06-01T00:00:00Z -r -P week -o yaml
+- date: '2022-05-01T00:00:05.000Z'
+  block: 14688630
+  timestamp: 1651363205
+- date: '2022-05-08T00:00:29.000Z'
+  block: 14732822
+  timestamp: 1651968029
+- date: '2022-05-15T00:00:20.000Z'
+  block: 14776688
+  timestamp: 1652572820
+- date: '2022-05-22T00:00:12.000Z'
+  block: 14820222
+  timestamp: 1653177612
+- date: '2022-05-29T00:00:58.000Z'
+  block: 14863278
+  timestamp: 1653782458
+```
+Note that for range queries the end datetime is excluded from the output.
+
+Full usage info is as follows:
+```shell
+$ date-to-block -h
+date-to-block <start> [end]
+
+Extract block info from datetime(s)
+
+Positionals:
+  start  The start datetime in ISO format                               [string]
+  end    The end datetime in ISO format                                 [string]
+
+Options:
+      --version        Show version number                             [boolean]
+  -a, --after          If true search for the nearest block after the given
+                       date, else before               [boolean] [default: true]
+  -o, --output-format       [string] [choices: "json", "yaml"] [default: "json"]
+  -P, --period         Period delimiting blocks in range
+           [string] [choices: "year", "quarter", "month", "week", "day", "hour",
+                                                     "minute"] [default: "hour"]
+  -p, --provider       JSON-RPC provider URI
+                                      [string] [default: "https://l1.nahmii.io"]
+  -r, --range          Output range of block between start and end
+                                                      [boolean] [default: false]
+  -h, --help           Show help                                       [boolean]
 ```
