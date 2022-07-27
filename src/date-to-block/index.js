@@ -7,10 +7,11 @@ const {hideBin} = require('yargs/helpers');
 const BlockByDate = require('ethereum-block-by-date');
 const ethers = require('ethers');
 const yaml = require('js-yaml');
+const os = require('os');
 
 const updateDate = (d) => ({...d, date: new Date(d.timestamp * 1000).toISOString()});
 
-const argv = yargs(hideBin(process.argv))
+const _yargs = yargs(hideBin(process.argv))
   .usage('$0 <start> [end]', 'Extract block info from datetime(s)')
   .positional('start', {
     describe: 'The start datetime in ISO format',
@@ -44,7 +45,7 @@ const argv = yargs(hideBin(process.argv))
     describe: 'Period delimiting blocks in range',
     type: 'string',
     choices: ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute'],
-    default: 'hour',
+    default: 'week',
     implies: 'range'
   })
   .option('provider', {
@@ -68,8 +69,15 @@ const argv = yargs(hideBin(process.argv))
   })
   .strict()
   .help('h')
-  .alias('h', 'help')
-  .argv;
+  .alias('h', 'help');
+
+const argv = _yargs.parse();
+
+if (argv.range && !argv.end) {
+  _yargs.showHelp();
+  console.error(os.EOL + 'Missing dependent arguments:' + os.EOL + ' range -> end');
+  process.exit(1);
+}
 
 const blockByDate = new BlockByDate(new ethers.providers.JsonRpcProvider(argv.provider));
 
